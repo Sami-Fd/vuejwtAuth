@@ -48,7 +48,7 @@ module.exports.signup_post = async (req, res) => {
         res.status(201).json({ user: user._id })
     } catch (error) {
         const errors = handleErrors(error)
-        res.status(400).json({ errors })
+        res.json({ errors })
     }
 }
 module.exports.login_post = async (req, res) => {
@@ -60,7 +60,7 @@ module.exports.login_post = async (req, res) => {
         res.status(200).json({ user: user._id })
     } catch (error) {
         const errors = handleErrors(error)
-        res.status(400).json({ errors })
+        res.json({ errors })
     }
 }
 module.exports.logout_get = (req, res) => {
