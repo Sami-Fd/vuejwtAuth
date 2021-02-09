@@ -31,6 +31,7 @@
 
 <script>
 import axios from "axios";
+import { mapMutations } from "vuex";
 
 export default {
   components: {},
@@ -53,9 +54,10 @@ export default {
   mounted() {},
 
   methods: {
+    ...mapMutations(["setUser"]),
     userin() {
       axios
-        .post(`${this.api}/login`, this.user)
+        .post(`${this.api}/api/login`, this.user)
         .then((response) => {
           console.log(response);
           if (response.data.errors) {
@@ -64,6 +66,7 @@ export default {
             this.snackbar = true;
           }
           if (response.data.user) {
+            this.setUser(response.data);
             this.$router.push("/");
           }
         })

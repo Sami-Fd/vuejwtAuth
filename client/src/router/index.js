@@ -40,7 +40,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   console.log(to, from)
   // ...
-  if (to.path !== '/login' && to.path !== '/check' && process.env.NODE_ENV !== 'development') {
+  if (to.path !== '/login' && to.path !== '/check' && to.path !== '/signup' && to.path !== '/') {
     checkAuth()
   } else {
     console.log("Other paths...")
@@ -56,10 +56,13 @@ function checkAuth() {
         console.log("Redirect...");
         router.push('/login');
       } else if (response.data.check) {
-        console.log("User:", response.data.user)
+        console.log("User:", response.data)
       }
     }
-    )
+    ).catch(e => {
+      console.log(e)
+      router.push('/login');
+    })
 }
 
 

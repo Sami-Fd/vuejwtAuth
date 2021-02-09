@@ -30,7 +30,7 @@
 
 <script>
 import axios from "axios";
-
+import { mapMutations } from "vuex";
 export default {
   components: {},
   data: () => ({
@@ -51,9 +51,10 @@ export default {
   }),
 
   methods: {
+    ...mapMutations(["setUser"]),
     addUser() {
       axios
-        .post(`${this.api}/signup`, this.user)
+        .post(`${this.api}/api/signup`, this.user)
         .then((response) => {
           this.newUser = response.data;
           console.log(response.data.errors);
@@ -63,6 +64,7 @@ export default {
             this.snackbar = true;
           }
           if (this.newUser.user) {
+            this.setUser(response.data);
             this.$router.push("/");
           }
         })

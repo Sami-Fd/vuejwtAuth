@@ -1,33 +1,39 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./routes/authRoutes.js');
+const cars = require('./routes/cars.js');
 const cookieParser = require('cookie-parser')
-const { requireAuth, checkUser } = require('./middleware/authMiddleware.js')
 const app = express();
 const cors = require("cors");
-
+const jwt = require('jsonwebtoken');
+var history = require('connect-history-api-fallback');
 
 // middleware
-app.use(express.static('public'));
+app.use(history());
+app.use(express.static('../client/dist'));
+app.use(express.static('../client/public'));
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
+
 
 // view engine
 app.set('view engine', 'ejs');
 
 // database connection
-//mongodb+srv://<username>:<password>@clustername.mongodb.net/<dbname>
-const dbURI = 'mongodb+srv://<username>:<password>@clustername.mongodb.net/<dbname>';
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true })
-  .then((result) => app.listen(3000))
-  .catch((err) => console.log(err));
+const mongoURI = 'mongodb://localhost/jwtauth'
+mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+  if (err) console.log("error while opening the db")
+})
+const port = '3000'
 
+app.listen(port, () => {
+  console.log("Server started: ")
+  console.log(`http://localhost:${port}`)
+})
 // routes
-app.get('*', checkUser)
-app.get('/', (req, res) => res.render('home'));
-app.get('/cars', requireAuth, (req, res) => res.render('cars'));
 app.use(authRoutes)
+app.use(cars)
 
 
 // check login
@@ -35,6 +41,7 @@ app.get('/check', function (req, res, next) {
 
   const token = req.cookies.jwt
   //check token
+  console.log("received")
   if (token) {
     jwt.verify(token, 'your secret word to sign token', (err, decodedToken) => {
       if (err) {
